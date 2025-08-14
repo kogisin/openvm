@@ -7,14 +7,14 @@ In this section we will build and run a fibonacci program.
 First, create a new Rust project.
 
 ```bash
-cargo init fibonacci
+cargo openvm init fibonacci
 ```
 
-In `Cargo.toml`, add the following dependency:
+This will generate an OpenVM-specific starter package. Notice `Cargo.toml` has the following dependency:
 
 ```toml
 [dependencies]
-openvm = { git = "https://github.com/openvm-org/openvm.git", features = ["std"] }
+openvm = { git = "https://github.com/openvm-org/openvm.git", tag = "v1.3.0", features = ["std"] }
 ```
 
 Note that `std` is not enabled by default, so explicitly enabling it is required.
@@ -49,7 +49,7 @@ To build the program, run:
 cargo openvm build
 ```
 
-This will output an OpenVM executable file to `./openvm/app.vmexe`.
+This will output an OpenVM executable file to `./target/openvm/release/fibonacci.vmexe`.
 
 ## Keygen
 
@@ -59,22 +59,20 @@ Before generating any proofs, we will also need to generate the proving and veri
 cargo openvm keygen
 ```
 
-This will output a serialized proving key to `./openvm/app.pk` and a verification key to `./openvm/app.vk`.
+This will output a serialized proving key to `./target/openvm/app.pk` and a verification key to `./target/openvm/app.vk`.
 
 ## Proof Generation
 
 Now we are ready to generate a proof! Simply run:
 
 ```bash
-OPENVM_FAST_TEST=1 cargo openvm prove app --input "0x010A00000000000000"
+cargo openvm prove app --input "0x010A00000000000000"
 ```
 
 The `--input` field is passed to the program which receives it via the `io::read` function.
 In our `main.rs` we called `read()` to get `n: u64`. The input here is `n = 10u64` _in little endian_. Note that this value must be padded to exactly 8 bytes (64 bits) and is prefixed with `0x01` to indicate that the input is composed of raw bytes.
 
-The serialized proof will be output to `./openvm/app.proof`.
-
-The `OPENVM_FAST_TEST` environment variable is used to enable fast proving for testing purposes. To run with proof with secure parameters, remove the environmental variable.
+The serialized proof will be output to `./fibonacci.app.proof`.
 
 ## Proof Verification
 

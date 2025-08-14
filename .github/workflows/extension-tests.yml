@@ -8,6 +8,7 @@ on:
     paths:
       - "crates/circuits/**"
       - "crates/vm/**"
+      - "crates/toolchain/**"
       - "extensions/**"
       - "Cargo.toml"
       - ".github/workflows/extension-tests.yml"
@@ -51,6 +52,7 @@ jobs:
           filters: |
             - "crates/circuits/**"
             - "crates/vm/**"
+            - "crates/toolchain/**"
             - "extensions/${{ matrix.extensions.path }}/**"
             - ".github/workflows/extension-tests.yml"
       - name: Skip if no changes
@@ -76,8 +78,6 @@ jobs:
           FEATURE_ARGS=""
           if [[ "${{ matrix.extension.name }}" == "pairing" ]]; then
             FEATURE_ARGS="--features=bn254,bls12_381,halo2curves"
-          elif [[ "${{ matrix.extension.name }}" == "ecc" ]]; then
-            FEATURE_ARGS="--features=k256,p256"
           fi
           cargo nextest run --cargo-profile=fast $FEATURE_ARGS --no-tests=pass
 

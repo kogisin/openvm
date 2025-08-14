@@ -1,6 +1,6 @@
 # OpenVM
 
-[![Telegram Chat][tg-badge]][tg-url]
+[![Telegram Chat][tg-badge]][tg-url] [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/openvm-org/openvm)
 
 [**Install**](https://book.openvm.dev/getting-started/install.html)
 | [User Book](https://book.openvm.dev)
@@ -32,7 +32,7 @@ OpenVM is a performant and modular zkVM framework built for customization and ex
 
 ## Status
 
-As of May 2025, OpenVM v1.1.0 and later are recommended for production use. OpenVM completed an external [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-cantina-report.pdf) on [Cantina](https://cantina.xyz/) from January to March 2025 as well as an internal [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-internal/README.md) by members of the [Axiom](https://axiom.xyz/) team during the same timeframe.
+As of June 2025, OpenVM v1.2.0 and later are recommended for production use. OpenVM completed an external [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-cantina-report.pdf) on [Cantina](https://cantina.xyz/) from January to March 2025 as well as an internal [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-internal/README.md) by members of the [Axiom](https://axiom.xyz/) team during the same timeframe.
 
 ## For Users
 

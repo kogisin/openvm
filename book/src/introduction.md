@@ -15,8 +15,8 @@ OpenVM is an open-source zero-knowledge virtual machine (zkVM) framework focused
   - The Keccak-256 and SHA2-256 hash functions
   - Int256 arithmetic
   - Modular arithmetic over arbitrary fields
-  - Elliptic curve operations, including multi-scalar multiplication and ECDSA signature verification, including for the secp256k1 and secp256r1 curves.
-  - Pairing operations on the BN254 and BLS12-381 curves.
+  - Elliptic curve operations, including multi-scalar multiplication and ECDSA signature verification, including for the secp256k1 and secp256r1 curves
+  - Pairing operations on the BN254 and BLS12-381 curves
 
 - **Rust Frontend**: ISA extensions are directly accessible through a Rust frontend via [intrinsic functions](https://en.wikipedia.org/wiki/Intrinsic_function), providing a smooth developer experience.
 
@@ -28,12 +28,13 @@ The following chapters will guide you through:
 
 - [Getting started](./getting-started/install.md).
 - [Writing applications](./writing-apps/overview.md) in Rust targeting OpenVM and generating proofs.
-- [Using existing extensions](./custom-extensions/overview.md) to optimize your Rust programs.
+- [Acceleration using extensions](./custom-extensions/overview.md) to optimize your Rust programs.
+- An assortment of helpful [guest libraries](./guest-libs/keccak256.md) designed for direct use within your guest programs.
 - [How to add custom VM extensions](./advanced-usage/new-extension.md).
 
 ## Security Status
 
-As of May 2025, OpenVM v1.1.0 and later are recommended for production use. OpenVM completed an external [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-cantina-report.pdf) on [Cantina](https://cantina.xyz/) from January to March 2025 as well as an internal [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-internal/README.md) by members of the [Axiom](https://axiom.xyz/) team during the same timeframe.
+As of June 2025, OpenVM v1.2.0 and later are recommended for production use. OpenVM completed an external [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-cantina-report.pdf) on [Cantina](https://cantina.xyz/) from January to March 2025 as well as an internal [audit](https://github.com/openvm-org/openvm/blob/main/audits/v1-internal/README.md) by members of the [Axiom](https://axiom.xyz/) team during the same timeframe.
 
 > 📖 **About this book**
 >
