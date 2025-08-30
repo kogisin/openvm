@@ -1,3 +1,6 @@
+#![cfg_attr(feature = "tco", allow(incomplete_features))]
+#![cfg_attr(feature = "tco", feature(explicit_tail_calls))]
+
 pub mod commands;
 pub mod default;
 pub mod input;
@@ -6,8 +9,7 @@ pub mod util;
 use std::process::{Command, Stdio};
 
 use eyre::{Context, Result};
-
-pub const RUSTUP_TOOLCHAIN_NAME: &str = "nightly-2025-02-14";
+pub use openvm_build::{get_rustup_toolchain_name, DEFAULT_RUSTUP_TOOLCHAIN_NAME};
 
 pub const OPENVM_VERSION_MESSAGE: &str = concat!(
     "v",

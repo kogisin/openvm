@@ -25,6 +25,9 @@ __pycache__/
 metrics.json
 guest.syms
 
+# Generated configs
+.clangd
+
 # KZG trusted setup
 **/params
 
@@ -37,3 +40,9 @@ guest.syms
 
 # openvm generated files
 crates/cli/openvm/
+
+# samply profile
+profile.json.gz
+
+# test fixtures
+benchmarks/fixtures
