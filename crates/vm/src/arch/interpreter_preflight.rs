@@ -1,5 +1,7 @@
 use std::{iter::repeat_n, sync::Arc};
 
+#[cfg(not(feature = "parallel"))]
+use itertools::Itertools;
 use openvm_instructions::{instruction::Instruction, program::Program, LocalOpcode, SystemOpcode};
 use openvm_stark_backend::{
     p3_field::{Field, PrimeField32},
@@ -9,7 +11,7 @@ use openvm_stark_backend::{
 use crate::{
     arch::{
         execution_mode::PreflightCtx, interpreter::get_pc_index, Arena, ExecutionError, ExecutorId,
-        ExecutorInventory, PreflightExecutor, StaticProgramError, VmExecState, VmStateMut,
+        ExecutorInventory, PreflightExecutor, StaticProgramError, VmExecState,
     },
     system::memory::online::TracingMemory,
 };
@@ -101,17 +103,13 @@ impl<F: Field, E> PreflightInterpretedInstance<F, E> {
         &self.inventory.executors
     }
 
-    pub fn filtered_execution_frequencies(&self) -> Vec<u32>
-    where
-        E: Send + Sync,
-    {
+    pub fn filtered_execution_frequencies(&self) -> Vec<u32> {
         let base_idx = get_pc_index(self.pc_base);
         self.pc_handler
             .par_iter()
-            .enumerate()
+            .zip_eq(&self.execution_frequencies)
             .skip(base_idx)
-            .filter(|(_, entry)| entry.is_some())
-            .map(|(i, _)| self.execution_frequencies[i])
+            .filter_map(|(entry, freq)| entry.is_some().then_some(*freq))
             .collect()
     }
 
@@ -138,7 +136,7 @@ impl<F: PrimeField32, E> PreflightInterpretedInstance<F, E> {
             if state
                 .ctx
                 .instret_end
-                .is_some_and(|instret_end| state.instret >= instret_end)
+                .is_some_and(|instret_end| state.instret() >= instret_end)
             {
                 // should suspend
                 break;
@@ -146,7 +144,7 @@ impl<F: PrimeField32, E> PreflightInterpretedInstance<F, E> {
 
             // Fetch, decode and execute single instruction
             self.execute_instruction(state)?;
-            state.instret += 1;
+            *state.instret_mut() += 1;
         }
 
         Ok(())
@@ -162,7 +160,7 @@ impl<F: PrimeField32, E> PreflightInterpretedInstance<F, E> {
         RA: Arena,
         E: PreflightExecutor<F, RA>,
     {
-        let pc = state.pc;
+        let pc = state.pc();
         let pc_idx = get_pc_index(pc);
         let pc_entry = self
             .pc_handler
@@ -205,17 +203,8 @@ impl<F: PrimeField32, E> PreflightInterpretedInstance<F, E> {
             // length equal to num_airs
             state.ctx.arenas.get_unchecked_mut(air_idx)
         };
-        let state_mut = VmStateMut {
-            pc: &mut state.vm_state.pc,
-            memory: &mut state.vm_state.memory,
-            streams: &mut state.vm_state.streams,
-            rng: &mut state.vm_state.rng,
-            custom_pvs: &mut state.vm_state.custom_pvs,
-            ctx: arena,
-            #[cfg(feature = "metrics")]
-            metrics: &mut state.vm_state.metrics,
-        };
-        executor.execute(state_mut, &pc_entry.insn)?;
+        let vm_state_mut = state.vm_state.into_mut(arena);
+        executor.execute(vm_state_mut, &pc_entry.insn)?;
 
         #[cfg(feature = "metrics")]
         {
@@ -249,14 +238,14 @@ macro_rules! execute_spanned {
         #[cfg(feature = "metrics")]
         let start = std::time::Instant::now();
         #[cfg(feature = "metrics")]
-        let start_instret = $state.instret;
+        let start_instret = $state.instret();
 
         let result = $executor.execute_from_state($state);
 
         #[cfg(feature = "metrics")]
         {
             let elapsed = start.elapsed();
-            let insns = $state.instret - start_instret;
+            let insns = $state.instret() - start_instret;
             tracing::info!("instructions_executed={insns}");
             metrics::counter!(concat!($name, "_insns")).absolute(insns);
             metrics::gauge!(concat!($name, "_insn_mi/s"))
